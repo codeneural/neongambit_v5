@@ -1,0 +1,857 @@
+# ============================================================================
+# NeonGambit — NEON Coaching Template Library
+# ============================================================================
+# Version: 1.0 (aligned with Master Guide v5.1)
+#
+# STRUCTURE PER TEMPLATE:
+#   pattern_key:
+#     en:
+#       low:                          # ELO 1000–1200: immediate, concrete
+#         short: "≤20 words"          # In-game NEON terminal display
+#         detail: "≤40 words"         # Post-game debrief / tap-to-expand
+#       mid:                          # ELO 1200–1500: pattern-based
+#         short: "..."
+#         detail: "..."
+#       high:                         # ELO 1500–1700: strategic, layered
+#         short: "..."
+#         detail: "..."
+#     es:
+#       low/mid/high: same structure
+#
+# DESIGN RULES:
+#   1. short ≤ 20 words — displayed in NEON terminal during sparring
+#   2. detail ≤ 40 words — shown in post-session debrief or tap-to-expand
+#   3. Every blunder/mistake: consequence → pattern name → forward seed
+#   4. Every excellent: specific praise → pattern reinforcement
+#   5. Never generic ("good job"). Never shaming. Always coaching.
+#   6. Cyberpunk terms sparingly: "calculated", "glitch", "system error"
+#   7. {placeholders} for dynamic values: {piece}, {square}, {move}, etc.
+#
+# PLACEHOLDER REFERENCE:
+#   {piece}          — piece type (knight, bishop, queen, etc.)
+#   {square}         — square name (d4, e5, f3, etc.)
+#   {square1/2}      — two different squares
+#   {target1/2}      — two target pieces/squares
+#   {file}           — file letter (d-file, e-file)
+#   {rank}           — rank number (4th rank, 7th rank)
+#   {side}           — kingside / queenside
+#   {best_move}      — the engine's best move in SAN
+#   {move}           — move number
+#   {minutes}        — time elapsed
+#   {valuable_piece} — the piece behind the pin (king, queen, rook)
+#   {moving_piece}   — piece that moved to reveal discovery
+#   {attacking_piece}— piece revealed behind the mover
+#   {plan_description} — positional plan name
+#   {threat_type}    — type of threat opponent can execute
+#   {escape_move}    — prophylactic move suggestion
+#
+# ============================================================================
+
+
+# ============================================================================
+# BLUNDERS — consequence + pattern name + forward seed
+# ============================================================================
+
+blunder_hanging_piece:
+  en:
+    low:
+      short: "Your {piece} on {square} has no defender. Hanging piece — always check protection before moving."
+      detail: "That's a hanging piece. Before every move, scan the board: is anything I'm leaving behind undefended? This is the #1 cause of material loss below 1200."
+    mid:
+      short: "Dropping {piece} on {square}. Hanging piece pattern. {best_move} kept it protected."
+      detail: "After every trade or pawn push, recheck what's left undefended. Hanging pieces appear most often right after exchanges — the board changes and you miss the gap."
+    high:
+      short: "That {piece} was overloaded — two jobs, one piece. Overloaded piece motif."
+      detail: "When one piece defends {square1} and covers {square2}, your opponent only needs one forcing move to exploit the overload. Redistribute defensive duties before they force the issue."
+  es:
+    low:
+      short: "Tu {piece} en {square} no tiene defensor. Pieza colgada — verifica protección antes de mover."
+      detail: "Eso es una pieza colgada. Antes de cada jugada, escanea el tablero: ¿algo que dejo atrás queda sin defensa? Esta es la causa #1 de pérdida de material bajo 1200."
+    mid:
+      short: "Pierdes {piece} en {square}. Patrón de pieza colgada. {best_move} la mantenía protegida."
+      detail: "Después de cada cambio o avance de peón, revisa qué queda sin defender. Las piezas colgadas aparecen más frecuentemente justo después de intercambios."
+    high:
+      short: "Esa {piece} estaba sobrecargada — dos funciones, una pieza. Motivo de sobrecarga."
+      detail: "Cuando una pieza defiende {square1} y cubre {square2}, tu oponente solo necesita una jugada forzada para explotar la sobrecarga. Redistribuye las tareas defensivas antes."
+
+blunder_fork:
+  en:
+    low:
+      short: "Their {piece} attacks two pieces at once. That's a fork — watch for double-attack squares."
+      detail: "A fork hits two targets simultaneously. Knights are the classic fork piece because they attack in an L-shape. When your pieces cluster near each other, forks become possible."
+    mid:
+      short: "Fork on {square}. Your {target1} and {target2} both hit. Pieces clustered too close."
+      detail: "This pattern appears when pieces sit on the same rank, diagonal, or near the king. Before settling a piece, ask: does this create a fork target for an enemy knight or queen?"
+    high:
+      short: "Fork geometry was available because {target1} shared a knight-reach zone with {target2}."
+      detail: "With centralized knights, always map the L-shaped attack squares. The fork didn't appear suddenly — it was set up two moves ago when the geometry aligned. Catalog those setups."
+  es:
+    low:
+      short: "Su {piece} ataca dos piezas a la vez. Eso es un tenedor — vigila casillas de doble ataque."
+      detail: "Un tenedor golpea dos objetivos simultáneamente. Los caballos son la pieza clásica de tenedor por su ataque en L. Cuando tus piezas se agrupan, los tenedores se vuelven posibles."
+    mid:
+      short: "Tenedor en {square}. Tu {target1} y {target2} ambos amenazados. Piezas demasiado juntas."
+      detail: "Este patrón aparece cuando las piezas están en la misma fila, diagonal, o cerca del rey. Antes de colocar una pieza, pregunta: ¿esto crea un objetivo de tenedor?"
+    high:
+      short: "La geometría del tenedor existía porque {target1} compartía zona de alcance de caballo con {target2}."
+      detail: "Con caballos centralizados, mapea siempre las casillas de ataque en L. El tenedor no apareció de repente — se preparó dos jugadas antes cuando la geometría se alineó."
+
+blunder_pin:
+  en:
+    low:
+      short: "Your {piece} is pinned to your {valuable_piece}. Pins freeze pieces — watch for aligned enemies."
+      detail: "A pin means your piece can't move because a more valuable piece sits behind it. Bishops and rooks create pins along lines. Avoid placing pieces between your king and enemy long-range pieces."
+    mid:
+      short: "Absolute pin on the {file} file. Your {piece} is frozen. Check alignments before developing."
+      detail: "Before developing a piece, verify it won't land on a line between your king and an enemy bishop or rook. Pins are easier to prevent than to escape. Once pinned, the pressure only grows."
+    high:
+      short: "That pin was visible two moves ago. The {file}-file alignment signaled danger. Prophylaxis needed."
+      detail: "In these structures, moves like {escape_move} break the pin geometry before it activates. When you see a long-range piece aiming at a file your king is on, preempt the pin — don't wait for it."
+  es:
+    low:
+      short: "Tu {piece} está clavada a tu {valuable_piece}. Las clavadas inmovilizan — vigila enemigos alineados."
+      detail: "Una clavada significa que tu pieza no puede moverse porque una más valiosa está detrás. Alfiles y torres crean clavadas. Evita poner piezas entre tu rey y piezas enemigas de largo alcance."
+    mid:
+      short: "Clavada absoluta en la columna {file}. Tu {piece} está congelada. Verifica alineaciones antes de desarrollar."
+      detail: "Antes de desarrollar, verifica que la pieza no caerá en una línea entre tu rey y un alfil o torre enemigo. Las clavadas son más fáciles de prevenir que de escapar."
+    high:
+      short: "Esa clavada era visible dos jugadas antes. La alineación en la columna {file} señalaba peligro."
+      detail: "En estas estructuras, jugadas como {escape_move} rompen la geometría de clavada antes de que se active. Cuando veas una pieza de largo alcance apuntando a la columna de tu rey, anticípate."
+
+blunder_discovered_attack:
+  en:
+    low:
+      short: "They moved one piece, attacked with another behind it. Discovered attack — two threats, one move."
+      detail: "A discovered attack happens when a piece moves and reveals an attack from the piece behind it. It's like a curtain opening. Watch for enemy pieces lined up on files and diagonals."
+    mid:
+      short: "Discovery. The {moving_piece} unmasked {attacking_piece} onto your {target}. Aligned pieces = danger."
+      detail: "This pattern triggers when a piece steps off a line that a friendly piece was already aiming down. In open positions with aligned long-range pieces, every step off the line is a potential discovery."
+    high:
+      short: "That discovery was set up when {attacking_piece} landed on {square}. You missed the alignment setup."
+      detail: "The discovery was telegraphed — the alignment existed for two moves. In open positions, catalog every file, rank, and diagonal where enemy pieces are stacked. Any piece on that line can unveil the attack."
+  es:
+    low:
+      short: "Movieron una pieza y atacaron con otra detrás. Ataque descubierto — dos amenazas, una jugada."
+      detail: "Un ataque descubierto ocurre cuando una pieza se mueve y revela un ataque de la pieza detrás. Es como abrir una cortina. Vigila piezas enemigas alineadas en columnas y diagonales."
+    mid:
+      short: "Descubierta. El {moving_piece} reveló al {attacking_piece} contra tu {target}. Piezas alineadas = peligro."
+      detail: "Este patrón se activa cuando una pieza sale de una línea que otra pieza amiga ya apuntaba. En posiciones abiertas con piezas de largo alcance alineadas, cada paso fuera de la línea es potencialmente una descubierta."
+    high:
+      short: "Esa descubierta se preparó cuando {attacking_piece} llegó a {square}. La alineación ya existía."
+      detail: "La descubierta estaba telegrafiada — la alineación existía desde dos jugadas antes. En posiciones abiertas, cataloga cada columna, fila y diagonal donde las piezas enemigas están apiladas."
+
+blunder_back_rank:
+  en:
+    low:
+      short: "Your king is trapped on the back rank. Back rank mate — create an escape square for your king."
+      detail: "Your pawns in front of the king form a wall that also traps it. One check on the back rank can be fatal. Always give your king a 'luft' — push one pawn to create an escape square."
+    mid:
+      short: "Back rank weakness. No escape square for your king. Push h3 or g3 to create luft."
+      detail: "Back rank mates happen when your rook or queen is overloaded defending the back rank. After castling, make creating an escape square a priority — especially before the middlegame heats up."
+    high:
+      short: "Back rank vulnerability was exploitable for three moves. Luft was the priority, not the attack."
+      detail: "You spent tempo on offense while your back rank was a liability. In positions where the opponent has a rook on an open file, prophylactic luft outweighs one more attacking move."
+  es:
+    low:
+      short: "Tu rey está atrapado en la primera fila. Mate de pasillo — crea una casilla de escape para tu rey."
+      detail: "Tus peones frente al rey forman una pared que también lo atrapa. Un jaque en la primera fila puede ser fatal. Siempre dale a tu rey un 'luft' — avanza un peón para crear casilla de escape."
+    mid:
+      short: "Debilidad de primera fila. Sin casilla de escape para tu rey. Avanza h3 o g3 para crear luft."
+      detail: "Los mates de pasillo ocurren cuando tu torre o dama está sobrecargada defendiendo la primera fila. Después de enrocar, crear una casilla de escape es prioridad."
+    high:
+      short: "La vulnerabilidad de primera fila era explotable desde tres jugadas. El luft era la prioridad, no el ataque."
+      detail: "Gastaste tiempos en la ofensiva mientras tu primera fila era una debilidad. En posiciones donde el oponente tiene torre en columna abierta, el luft preventivo supera una jugada más de ataque."
+
+blunder_skewer:
+  en:
+    low:
+      short: "Your {valuable_piece} is attacked through a line. Skewer — the piece behind it will fall."
+      detail: "A skewer is like a reverse pin: the more valuable piece is attacked first, and when it moves, the piece behind it gets captured. Keep your queen and king off the same line as enemy long-range pieces."
+    mid:
+      short: "Skewer along the {file}. Your {valuable_piece} forced to move, exposing {target} behind it."
+      detail: "Skewers exploit alignment just like pins, but in reverse — the bigger piece is in front. After every queen or king move, scan: did I just step onto a dangerous line?"
+    high:
+      short: "That skewer diagonal was open for two moves. You walked into the geometry. Alignment awareness."
+      detail: "The skewer was available because your pieces landed on the same diagonal as their bishop. In endgames especially, track every open line where your valuable pieces could be aligned."
+  es:
+    low:
+      short: "Tu {valuable_piece} es atacada a través de una línea. Enfilada — la pieza detrás caerá."
+      detail: "Una enfilada es como una clavada al revés: se ataca primero la pieza más valiosa, y cuando se mueve, se captura la de atrás. Mantén tu dama y rey fuera de la misma línea que piezas enemigas."
+    mid:
+      short: "Enfilada por la columna {file}. Tu {valuable_piece} forzada a moverse, exponiendo {target} detrás."
+      detail: "Las enfiladas explotan alineación como las clavadas, pero al revés — la pieza grande está al frente. Después de cada jugada de dama o rey, escanea: ¿me puse en una línea peligrosa?"
+    high:
+      short: "Esa diagonal de enfilada estaba abierta dos jugadas antes. Caminaste hacia la geometría."
+      detail: "La enfilada estaba disponible porque tus piezas cayeron en la misma diagonal que su alfil. En finales especialmente, rastrea cada línea abierta donde tus piezas valiosas puedan alinearse."
+
+blunder_trapped_piece:
+  en:
+    low:
+      short: "Your {piece} has no escape squares. Trapped piece — always check your piece can retreat safely."
+      detail: "A trapped piece is one that has run out of safe squares. Before moving a piece forward, always look: can it come back? Knights on the rim and bishops deep in enemy territory are common traps."
+    mid:
+      short: "Trapped {piece} on {square}. No retreat available. Before advancing, verify the escape route."
+      detail: "This often happens with bishops that chase pawns into enemy territory or knights that jump to the edge. The rule: before placing a piece in enemy territory, count its escape squares."
+    high:
+      short: "That {piece} was committed too deep without escape. Overextension — activity must have a retreat plan."
+      detail: "Piece activity is valuable only when it's sustainable. The {piece} on {square} had short-term threats but no long-term squares. In these positions, maintain a retreat option before committing."
+  es:
+    low:
+      short: "Tu {piece} no tiene casillas de escape. Pieza atrapada — siempre verifica que pueda retirarse."
+      detail: "Una pieza atrapada es la que se quedó sin casillas seguras. Antes de avanzar una pieza, mira: ¿puede volver? Caballos en el borde y alfiles profundos en territorio enemigo son trampas comunes."
+    mid:
+      short: "Tu {piece} atrapada en {square}. Sin retirada disponible. Antes de avanzar, verifica la ruta de escape."
+      detail: "Esto ocurre frecuentemente con alfiles que persiguen peones hacia territorio enemigo o caballos que saltan al borde. La regla: antes de poner una pieza en territorio enemigo, cuenta sus casillas de escape."
+    high:
+      short: "Esa {piece} se comprometió demasiado profundo sin escape. Sobreextensión — la actividad necesita plan de retirada."
+      detail: "La actividad de piezas solo es valiosa cuando es sostenible. La {piece} en {square} tenía amenazas a corto plazo pero sin casillas a largo plazo. Mantén una opción de retirada antes de comprometerte."
+
+blunder_queen_trap:
+  en:
+    low:
+      short: "Your queen wandered too far. Queen trap — your most valuable piece needs escape routes always."
+      detail: "When your queen enters enemy territory, every opponent move is a potential threat to trap it. Bring your queen out early only if you can see three safe squares for retreat."
+    mid:
+      short: "Queen trapped after {move}. Too many enemy pieces controlling escape squares. Retreat earlier."
+      detail: "Queen traps happen when minor pieces and pawns coordinate to block every exit. The queen is powerful but vulnerable to being cornered. In the opening, develop other pieces first."
+    high:
+      short: "The queen's activity cost its safety. Overcommitted to offense without secure routing."
+      detail: "That queen had one good square and three potential traps. When your queen is the only active piece, its activity is an illusion — the opponent controls the exits."
+  es:
+    low:
+      short: "Tu dama se alejó demasiado. Trampa de dama — tu pieza más valiosa necesita rutas de escape siempre."
+      detail: "Cuando tu dama entra en territorio enemigo, cada jugada del oponente es una amenaza potencial de atraparla. Saca la dama temprano solo si ves tres casillas seguras de retirada."
+    mid:
+      short: "Dama atrapada después de {move}. Demasiadas piezas enemigas controlando las salidas. Retírate antes."
+      detail: "Las trampas de dama ocurren cuando piezas menores y peones se coordinan para bloquear cada salida. La dama es poderosa pero vulnerable a ser acorralada."
+    high:
+      short: "La actividad de la dama costó su seguridad. Sobrecomprometida en la ofensiva sin ruta segura."
+      detail: "Esa dama tenía una buena casilla y tres trampas potenciales. Cuando tu dama es la única pieza activa, su actividad es una ilusión — el oponente controla las salidas."
+
+blunder_king_safety:
+  en:
+    low:
+      short: "Your king is exposed in the center. Castle quickly — your king needs shelter before the attack."
+      detail: "Leaving your king in the center is the most common cause of fast losses. Castle as early as possible — ideally before move 10. A castled king behind pawns survives; a centered king doesn't."
+    mid:
+      short: "King still in center at move {move}. Priority error — castling was more urgent than your last move."
+      detail: "You chose development or attack over king safety. In positions where the center is open, this is especially dangerous. One check on the open e-file could be devastating."
+    high:
+      short: "Delayed castling created a structural vulnerability. The center was open — king safety was non-negotiable."
+      detail: "The open center magnified the risk. In these positions, castling is not a 'when I get around to it' move — it's the highest priority. Your opponent's pieces were already aimed at the center."
+  es:
+    low:
+      short: "Tu rey está expuesto en el centro. Enroca rápido — tu rey necesita refugio antes del ataque."
+      detail: "Dejar el rey en el centro es la causa más común de derrotas rápidas. Enroca lo antes posible — idealmente antes de la jugada 10. Un rey enrocado detrás de peones sobrevive; uno en el centro no."
+    mid:
+      short: "Rey aún en centro en jugada {move}. Error de prioridad — enrocar era más urgente que tu última jugada."
+      detail: "Elegiste desarrollo o ataque sobre seguridad del rey. En posiciones donde el centro está abierto, esto es especialmente peligroso. Un jaque en la columna e abierta podría ser devastador."
+    high:
+      short: "El enroque tardío creó una vulnerabilidad estructural. El centro estaba abierto — la seguridad del rey no era negociable."
+      detail: "El centro abierto magnificó el riesgo. En estas posiciones, enrocar no es una jugada 'cuando tenga tiempo' — es la prioridad máxima."
+
+blunder_wrong_exchange:
+  en:
+    low:
+      short: "You traded a strong piece for a weaker one. Bad exchange — count the piece values before trading."
+      detail: "Knight and bishop are worth ~3 points, rook ~5, queen ~9. Don't trade a rook for a knight unless you get something extra. Always count before you capture."
+    mid:
+      short: "That exchange favored your opponent. You gave up the more active piece. Evaluate activity, not just material."
+      detail: "Material value is a guide, not a rule. But when the traded piece was your most active one, the exchange hurts doubly — you lost material AND activity. Trade their good pieces, not yours."
+    high:
+      short: "That trade released their structural tension. They wanted that exchange. You obliged."
+      detail: "Your opponent's position improved after the trade because it resolved a problem they had. Before trading, ask: does this exchange help me or my opponent more? If unsure, don't trade."
+  es:
+    low:
+      short: "Cambiaste una pieza fuerte por una débil. Mal cambio — cuenta los valores antes de cambiar."
+      detail: "Caballo y alfil valen ~3 puntos, torre ~5, dama ~9. No cambies torre por caballo a menos que obtengas algo extra. Siempre cuenta antes de capturar."
+    mid:
+      short: "Ese cambio favoreció a tu oponente. Entregaste la pieza más activa. Evalúa actividad, no solo material."
+      detail: "El valor material es una guía, no una regla. Pero cuando la pieza cambiada era tu más activa, el cambio duele doble — perdiste material Y actividad."
+    high:
+      short: "Ese cambio liberó la tensión estructural del rival. Ellos querían ese cambio. Los complaciste."
+      detail: "La posición de tu oponente mejoró después del cambio porque resolvió un problema que tenían. Antes de cambiar, pregunta: ¿este cambio me ayuda a mí o a mi oponente?"
+
+blunder_pawn_promotion_miss:
+  en:
+    low:
+      short: "Their pawn is about to promote. Stopping passed pawns is urgent — block or capture immediately."
+      detail: "A passed pawn near promotion is the most dangerous thing on the board. When you see a pawn past the 5th rank with no blockers, it's an emergency. Drop everything and stop it."
+    mid:
+      short: "Missed the passed pawn threat on {file}. Passed pawns must be blockaded or eliminated. Priority shift needed."
+      detail: "Passed pawns increase in danger exponentially as they advance. A pawn on the 6th rank is often worth a piece. The rule: blockade it with a piece, or capture it. Never ignore it."
+    high:
+      short: "That passed pawn was controllable three moves ago. You prioritized elsewhere. Pawn dynamics demand attention."
+      detail: "The passed pawn became lethal because you spent tempo on a secondary plan. In positions with advanced passed pawns, every tempo decision must account for the pawn's march. Restraint first, then your plan."
+  es:
+    low:
+      short: "Su peón está a punto de coronar. Detener peones pasados es urgente — bloquea o captura ya."
+      detail: "Un peón pasado cerca de la coronación es lo más peligroso del tablero. Cuando veas un peón más allá de la 5ta fila sin bloqueo, es una emergencia. Deja todo y detenlo."
+    mid:
+      short: "No viste la amenaza del peón pasado en {file}. Los peones pasados deben bloquearse o eliminarse."
+      detail: "Los peones pasados aumentan su peligro exponencialmente al avanzar. Un peón en la 6ta fila a menudo vale una pieza. La regla: bloquéalo con una pieza, o captúralo. Nunca lo ignores."
+    high:
+      short: "Ese peón pasado era controlable tres jugadas antes. Priorizaste otra cosa. La dinámica de peones exige atención."
+      detail: "El peón pasado se volvió letal porque gastaste tiempos en un plan secundario. En posiciones con peones pasados avanzados, cada decisión de tempo debe considerar la marcha del peón."
+
+
+# ============================================================================
+# MISTAKES — consequence + pattern name + forward seed
+# ============================================================================
+
+mistake_tempo_loss:
+  en:
+    low:
+      short: "You moved the same piece twice. Lost tempo — develop a new piece instead of shuffling."
+      detail: "Every move in the opening should bring a new piece into the game. Moving the same piece twice means your opponent got a free developing move. That tempo adds up."
+    mid:
+      short: "Tempo loss. Moving {piece} to {square} then again wastes development time. One piece, one move."
+      detail: "In the opening, every move should bring a new piece into the game or improve your pawn structure. When you shuffle, your opponent develops — and development leads to initiative."
+    high:
+      short: "That tempo concession shifted initiative. The extra move lets them execute {threat_type} first."
+      detail: "Tempo isn't abstract — it's concrete. That wasted move allowed your opponent to complete development one move faster, which means they attack one move sooner. In sharp positions, one tempo is decisive."
+  es:
+    low:
+      short: "Moviste la misma pieza dos veces. Tempo perdido — desarrolla una pieza nueva en vez de reubicar."
+      detail: "Cada jugada en la apertura debería traer una pieza nueva al juego. Mover la misma pieza dos veces significa que tu oponente obtuvo un desarrollo gratis."
+    mid:
+      short: "Pérdida de tempo. Mover {piece} a {square} y luego otra vez desperdicia tiempo de desarrollo."
+      detail: "En la apertura, cada jugada debería traer una pieza nueva o mejorar tu estructura. Cuando reubicias, tu oponente desarrolla — y el desarrollo lleva a la iniciativa."
+    high:
+      short: "Esa concesión de tempo cambió la iniciativa. La jugada extra les permite ejecutar {threat_type} primero."
+      detail: "El tempo no es abstracto — es concreto. Esa jugada desperdiciada permitió a tu oponente completar el desarrollo una jugada más rápido, lo que significa que atacan una jugada antes."
+
+mistake_positional_drift:
+  en:
+    low:
+      short: "No single bad move, but you lost direction. Every move needs a purpose — even a small one."
+      detail: "When you don't know what to do, improve your worst-placed piece. If all pieces are developed, look for pawn breaks. Aimless moves hand the initiative to your opponent."
+    mid:
+      short: "Positional drift. Last three moves didn't improve anything. Find your worst piece and activate it."
+      detail: "When you're out of book, ask: what is my worst-placed piece? Improve that one. If none stand out, look for a pawn break that opens lines for your pieces. Activity is the antidote to drift."
+    high:
+      short: "The position demanded a plan and you temporized. In this structure, {plan_description} was correct."
+      detail: "Without a plan, even equal positions decay. You had the right pieces for {plan_description} but spent three moves on prophylaxis that wasn't needed. Action was the correct prophylaxis here."
+  es:
+    low:
+      short: "Ninguna jugada mala, pero perdiste el rumbo. Cada jugada necesita un propósito — aunque sea pequeño."
+      detail: "Cuando no sabes qué hacer, mejora tu pieza peor ubicada. Si todas están desarrolladas, busca rupturas de peón. Las jugadas sin rumbo entregan la iniciativa."
+    mid:
+      short: "Deriva posicional. Las últimas tres jugadas no mejoraron nada. Encuentra tu peor pieza y actívala."
+      detail: "Cuando estés fuera de libro, pregunta: ¿cuál es mi pieza peor ubicada? Mejora esa. Si ninguna destaca, busca una ruptura de peón que abra líneas. La actividad es el antídoto contra la deriva."
+    high:
+      short: "La posición exigía un plan y tú temporalizaste. En esta estructura, {plan_description} era correcto."
+      detail: "Sin un plan, incluso posiciones iguales se deterioran. Tenías las piezas correctas para {plan_description} pero gastaste tres jugadas en profilaxis innecesaria. La acción era la profilaxis correcta."
+
+mistake_passive_piece:
+  en:
+    low:
+      short: "Your {piece} on {square} isn't doing anything. A passive piece is almost like being down material."
+      detail: "A piece that can't attack or defend is a wasted piece. Look for your most passive piece and find a square where it does something useful. Active pieces win games."
+    mid:
+      short: "Passive {piece} on {square}. Reactivate it — every piece must contribute to your plan."
+      detail: "The difference between equal positions and winning ones is often one passive piece. Find the piece that's doing the least and reroute it to an active square. That's your next three moves."
+    high:
+      short: "That {piece} has been passive for five moves. Piece harmony demands all pieces participate. Reroute."
+      detail: "In these middlegame positions, the side with better piece coordination wins. Your {piece} on {square} was a spectator while the other pieces fought. Redirecting it was worth more than any pawn push."
+  es:
+    low:
+      short: "Tu {piece} en {square} no está haciendo nada. Una pieza pasiva es casi como estar en desventaja material."
+      detail: "Una pieza que no puede atacar ni defender es una pieza desperdiciada. Busca tu pieza más pasiva y encuentra una casilla donde haga algo útil."
+    mid:
+      short: "Tu {piece} pasiva en {square}. Reactívala — cada pieza debe contribuir a tu plan."
+      detail: "La diferencia entre posiciones iguales y ganadoras es frecuentemente una pieza pasiva. Encuentra la pieza que hace menos y redirigela a una casilla activa."
+    high:
+      short: "Esa {piece} lleva cinco jugadas pasiva. La armonía de piezas exige que todas participen. Redirige."
+      detail: "En estas posiciones de medio juego, el bando con mejor coordinación gana. Tu {piece} en {square} era espectadora mientras las otras piezas luchaban."
+
+mistake_premature_attack:
+  en:
+    low:
+      short: "You attacked before your pieces were ready. Finish development first, attack second."
+      detail: "Attacking with two pieces while your opponent has four is a recipe for disaster. Develop all your pieces, castle, then look for attacks. Patience wins more games than aggression."
+    mid:
+      short: "Premature attack. Not enough pieces supporting the offensive. Complete development, then strike."
+      detail: "An attack without sufficient force turns into overextension. Your opponent can counterattack through the center while your pieces are committed to the side. Develop fully, then attack."
+    high:
+      short: "Attack without full development creates structural weakness. Your center collapsed when they counterattacked."
+      detail: "The counter-punch through the center was predictable. In these positions, the attacking side needs at least one more piece in play before launching. The half-developed attack invited the refutation."
+  es:
+    low:
+      short: "Atacaste antes de que tus piezas estuvieran listas. Termina el desarrollo primero, ataca después."
+      detail: "Atacar con dos piezas mientras tu oponente tiene cuatro es receta para el desastre. Desarrolla todas tus piezas, enroca, luego busca ataques."
+    mid:
+      short: "Ataque prematuro. No hay suficientes piezas apoyando la ofensiva. Completa el desarrollo, luego golpea."
+      detail: "Un ataque sin fuerza suficiente se convierte en sobreextensión. Tu oponente puede contraatacar por el centro mientras tus piezas están comprometidas en el flanco."
+    high:
+      short: "Ataque sin desarrollo completo crea debilidad estructural. Tu centro colapsó cuando contraatacaron."
+      detail: "El contragolpe por el centro era predecible. En estas posiciones, el bando atacante necesita al menos una pieza más en juego antes de lanzarse."
+
+mistake_pawn_weakness:
+  en:
+    low:
+      short: "That pawn push created a permanent weakness. Pawns can't move backwards — think before pushing."
+      detail: "Unlike pieces, pawns never retreat. Every pawn push changes the position permanently. Before pushing, ask: does this create a weak square? Am I leaving something undefended?"
+    mid:
+      short: "Pawn structure weakened on {side}. That push created holes the opponent's pieces will target."
+      detail: "The squares around advanced pawns become weak because the pawn can't defend them anymore. Your opponent's knights and bishops will park on those holes. Think structurally before pushing."
+    high:
+      short: "Structural concession on {side}. The pawn push weakened {square}. Positional equity traded for tempo."
+      detail: "That pawn push gained tempo but permanently weakened {square}. In this type of position, the weak square matters more than the tempo. Your opponent's knight will occupy it for the rest of the game."
+  es:
+    low:
+      short: "Ese avance de peón creó una debilidad permanente. Los peones no retroceden — piensa antes de avanzar."
+      detail: "A diferencia de las piezas, los peones nunca retroceden. Cada avance cambia la posición permanentemente. Antes de avanzar, pregunta: ¿esto crea una casilla débil?"
+    mid:
+      short: "Estructura de peones debilitada en {side}. Ese avance creó agujeros que las piezas rivales explotarán."
+      detail: "Las casillas alrededor de peones avanzados se vuelven débiles porque el peón ya no puede defenderlas. Los caballos y alfiles enemigos se estacionarán en esos agujeros."
+    high:
+      short: "Concesión estructural en {side}. El avance de peón debilitó {square}. Equidad posicional cambiada por tempo."
+      detail: "Ese avance ganó un tempo pero debilitó permanentemente {square}. En este tipo de posición, la casilla débil importa más que el tempo."
+
+mistake_bad_exchange:
+  en:
+    low:
+      short: "You traded your active piece for their passive one. Keep your best pieces, trade their best pieces."
+      detail: "When you trade, think about which pieces are doing work. Your active bishop was worth more than their passive knight. Trade their good pieces and keep yours."
+    mid:
+      short: "Exchange favored opponent. You traded activity for material equivalence. Piece quality matters, not just count."
+      detail: "Material is equal after the trade, but your position worsened because you gave up your most active piece. In closed positions, keep your good knight. In open positions, keep your good bishop."
+    high:
+      short: "That exchange resolved their positional problem. They needed that trade more than you did."
+      detail: "Your opponent's cramped position opened up after the exchange. Before trading, ask: who benefits more from simplification? If the answer isn't clearly you, maintain the tension."
+  es:
+    low:
+      short: "Cambiaste tu pieza activa por una pasiva del rival. Mantén tus mejores piezas, cambia las de ellos."
+      detail: "Cuando cambies, piensa qué piezas están trabajando. Tu alfil activo valía más que su caballo pasivo. Cambia sus buenas piezas y mantén las tuyas."
+    mid:
+      short: "El cambio favoreció al oponente. Cambiaste actividad por equivalencia material. La calidad importa, no solo la cantidad."
+      detail: "El material es igual después del cambio, pero tu posición empeoró porque entregaste tu pieza más activa. En posiciones cerradas, mantén tu buen caballo. En abiertas, tu buen alfil."
+    high:
+      short: "Ese cambio resolvió el problema posicional del rival. Necesitaban ese cambio más que tú."
+      detail: "La posición comprimida de tu oponente se abrió después del cambio. Antes de cambiar, pregunta: ¿quién se beneficia más de la simplificación?"
+
+
+# ============================================================================
+# INACCURACIES — lighter touch, still instructive
+# ============================================================================
+
+inaccuracy_minor_tempo:
+  en:
+    low:
+      short: "Slight delay in development. A faster move existed — but not a serious problem yet."
+      detail: "This wasn't a mistake, but a more efficient move was available. Small tempo gains compound over many moves. Look for moves that develop AND threaten simultaneously."
+    mid:
+      short: "Minor imprecision. A more efficient developing move was available. Edge surrendered, not the game."
+      detail: "The difference between good and excellent play is consistently choosing the most efficient move. This move was fine, but {best_move} developed with tempo — attacking while improving position."
+    high:
+      short: "Slight edge surrendered. Precision move was {best_move} — developing with initiative. Small margins compound."
+      detail: "At your level, these small imprecisions are what separate 1500 from 1700. The best move wasn't flashy — it simply accomplished two goals instead of one. Train yourself to look for multi-purpose moves."
+  es:
+    low:
+      short: "Leve retraso en desarrollo. Una jugada más rápida existía — pero no es un problema serio todavía."
+      detail: "Esto no fue un error, pero una jugada más eficiente estaba disponible. Las pequeñas ganancias de tempo se acumulan. Busca jugadas que desarrollen Y amenacen simultáneamente."
+    mid:
+      short: "Imprecisión menor. Una jugada de desarrollo más eficiente existía. Ventaja cedida, no la partida."
+      detail: "La diferencia entre jugar bien y jugar excelente es elegir consistentemente la jugada más eficiente. Esta jugada estaba bien, pero {best_move} desarrollaba con tempo."
+    high:
+      short: "Leve ventaja cedida. La jugada precisa era {best_move} — desarrollando con iniciativa. Pequeños márgenes se acumulan."
+      detail: "A tu nivel, estas pequeñas imprecisiones separan 1500 de 1700. La mejor jugada no era llamativa — simplemente cumplía dos objetivos en vez de uno."
+
+inaccuracy_piece_placement:
+  en:
+    low:
+      short: "That piece is on an okay square, but a better one was available. Small improvements add up."
+      detail: "Your piece isn't badly placed, but {best_move} would have put it on a more active square — controlling more key squares and supporting your pawns better."
+    mid:
+      short: "Suboptimal placement. {best_move} controlled more key squares. Piece activity determines who has the edge."
+      detail: "In the middlegame, the side whose pieces are on better squares holds the advantage. This move was reasonable but didn't maximize your piece's potential. Think: what's the BEST square for this piece?"
+    high:
+      short: "Piece placed on a secure but passive square. {best_move} was more dynamic. Favor active squares over safe ones."
+      detail: "Security without activity leads to passivity. Your piece is safe on {square} but not contributing to the fight. In these structures, active placement on {best_move} creates more problems for the opponent."
+  es:
+    low:
+      short: "Esa pieza está en una casilla aceptable, pero había una mejor. Las pequeñas mejoras se acumulan."
+      detail: "Tu pieza no está mal colocada, pero {best_move} la habría puesto en una casilla más activa — controlando más casillas clave y apoyando mejor tus peones."
+    mid:
+      short: "Colocación subóptima. {best_move} controlaba más casillas clave. La actividad de piezas determina quién tiene ventaja."
+      detail: "En el medio juego, el bando con piezas en mejores casillas tiene la ventaja. Esta jugada era razonable pero no maximizaba el potencial de tu pieza."
+    high:
+      short: "Pieza colocada en casilla segura pero pasiva. {best_move} era más dinámica. Favorece casillas activas sobre seguras."
+      detail: "Seguridad sin actividad lleva a pasividad. Tu pieza está segura en {square} pero no contribuye a la lucha. En estas estructuras, la colocación activa crea más problemas para el oponente."
+
+inaccuracy_missed_improvement:
+  en:
+    low:
+      short: "A slightly better option existed. Not a problem, but look for moves that do two things at once."
+      detail: "Your move only accomplished one goal. The better move would have improved your position while also creating a small threat. Multi-purpose moves are the key to steady improvement."
+    mid:
+      short: "Missed a dual-purpose continuation. {best_move} improved position while threatening. Two goals, one move."
+      detail: "Strong players consistently find moves that accomplish two things simultaneously — develop and threaten, defend and improve, attack and control. Train your eye to look for double-duty moves."
+    high:
+      short: "A more concrete continuation existed. {best_move} maintained momentum. Precision over safety in these positions."
+      detail: "When you have the initiative, maintaining momentum is critical. Your move was safe but allowed your opponent to consolidate. {best_move} kept the pressure and forced a concrete decision."
+  es:
+    low:
+      short: "Existía una opción ligeramente mejor. No es un problema, pero busca jugadas que hagan dos cosas a la vez."
+      detail: "Tu jugada solo cumplió un objetivo. La mejor jugada habría mejorado tu posición mientras creaba una pequeña amenaza. Las jugadas de doble propósito son la clave para mejorar."
+    mid:
+      short: "Perdiste una continuación de doble propósito. {best_move} mejoraba posición mientras amenazaba."
+      detail: "Los jugadores fuertes encuentran consistentemente jugadas que cumplen dos cosas simultáneamente. Entrena tu ojo para buscar jugadas de doble función."
+    high:
+      short: "Existía una continuación más concreta. {best_move} mantenía el impulso. Precisión sobre seguridad en estas posiciones."
+      detail: "Cuando tienes la iniciativa, mantener el impulso es crítico. Tu jugada era segura pero permitió al oponente consolidar. {best_move} mantenía la presión."
+
+
+# ============================================================================
+# EXCELLENT MOVES — specific praise + pattern reinforcement
+# ============================================================================
+
+excellent_double_threat:
+  en:
+    low:
+      short: "Two threats at once — they can't stop both. That's a double attack. Keep looking for these."
+      detail: "You created a position where your opponent has to choose which threat to deal with. This is how material gets won. Look for these whenever enemy pieces are on the same line or near each other."
+    mid:
+      short: "Clean. Fork on {square} hits {target1} and {target2}. You spotted the geometry. Calculated."
+      detail: "You recognized the double-attack geometry and executed it. This pattern recurs in positions with centralized pieces. The more you spot these, the faster they become instinct."
+    high:
+      short: "Dual-purpose. That creates problems on {side} while improving your {piece}. You provoked the tactic."
+      detail: "The difference between finding tactics and creating them is what you just demonstrated. You didn't stumble into the double threat — you set it up by first creating the conditions. That's advanced play."
+  es:
+    low:
+      short: "Dos amenazas a la vez — no pueden parar ambas. Eso es un doble ataque. Sigue buscando estos."
+      detail: "Creaste una posición donde tu oponente tiene que elegir qué amenaza resolver. Así se gana material. Busca estos siempre que las piezas enemigas estén en la misma línea."
+    mid:
+      short: "Limpio. Tenedor en {square} golpea {target1} y {target2}. Viste la geometría. Calculado."
+      detail: "Reconociste la geometría de doble ataque y la ejecutaste. Este patrón recurre en posiciones con piezas centralizadas. Cuanto más los detectes, más rápido se vuelven instinto."
+    high:
+      short: "Doble propósito. Crea problemas en {side} mientras mejora tu {piece}. Provocaste la táctica."
+      detail: "La diferencia entre encontrar tácticas y crearlas es lo que acabas de demostrar. No tropezaste con la doble amenaza — la preparaste creando primero las condiciones."
+
+excellent_pin_exploitation:
+  en:
+    low:
+      short: "You used the pin to win material. Pins are everywhere — keep scanning for them."
+      detail: "You spotted that the opponent's piece couldn't move because of the piece behind it, and you added pressure. That's clean tactical execution. Look for these alignments every move."
+    mid:
+      short: "Pin exploited on {file}. Opponent's alignment was their weakness. You saw it and capitalized."
+      detail: "When your opponent leaves pieces aligned with their king or queen, that's your signal. You didn't just see the pin — you increased the pressure correctly. That sequencing is key."
+    high:
+      short: "Textbook pin exploitation. You restricted escapes, then increased pressure. Sequencing was precise."
+      detail: "First you restricted the pinned piece's escape squares, then you piled on. That two-step process — restrict then attack — is what separates strong execution from lucky tactics. Well played."
+  es:
+    low:
+      short: "Usaste la clavada para ganar material. Las clavadas están en todos lados — sigue escaneando."
+      detail: "Viste que la pieza del oponente no podía moverse por la pieza detrás de ella, y añadiste presión. Ejecución táctica limpia. Busca estas alineaciones en cada jugada."
+    mid:
+      short: "Clavada explotada en {file}. La alineación del oponente era su debilidad. La viste y capitalizaste."
+      detail: "Cuando tu oponente deja piezas alineadas con su rey o dama, esa es tu señal. No solo viste la clavada — aumentaste la presión correctamente."
+    high:
+      short: "Explotación de clavada de libro. Restringiste escapes, luego aumentaste presión. La secuencia fue precisa."
+      detail: "Primero restringiste las casillas de escape de la pieza clavada, luego apilaste presión. Ese proceso de dos pasos — restringir y luego atacar — es lo que separa la ejecución fuerte."
+
+excellent_tactical_sequence:
+  en:
+    low:
+      short: "Strong sequence. You saw multiple moves ahead and executed. That's calculation improving."
+      detail: "You didn't just find one good move — you saw a sequence of moves that worked together. This kind of multi-move vision is exactly what separates improving players from stuck ones."
+    mid:
+      short: "Clean combination. You calculated the sequence correctly and your opponent had no defense."
+      detail: "That was a genuine combination — each move forced your opponent's reply, leading to a position you'd already calculated. The ability to see forcing sequences like this is the core of tactical strength."
+    high:
+      short: "Precise calculation. The forcing sequence was optimal. You saw through the complications. Calculated."
+      detail: "That tactical sequence required seeing through multiple candidate moves and evaluating the resulting positions accurately. Your calculation was sound. This is the level of play that gains rating points."
+  es:
+    low:
+      short: "Secuencia fuerte. Viste varias jugadas adelante y ejecutaste. Tu cálculo está mejorando."
+      detail: "No solo encontraste una buena jugada — viste una secuencia de jugadas que funcionaban juntas. Este tipo de visión multi-jugada es exactamente lo que separa a los jugadores que mejoran."
+    mid:
+      short: "Combinación limpia. Calculaste la secuencia correctamente y tu oponente no tenía defensa."
+      detail: "Esa fue una combinación genuina — cada jugada forzaba la respuesta del oponente, llevando a una posición que ya habías calculado."
+    high:
+      short: "Cálculo preciso. La secuencia forzada era óptima. Viste a través de las complicaciones. Calculado."
+      detail: "Esa secuencia táctica requirió ver a través de múltiples jugadas candidatas y evaluar las posiciones resultantes con precisión. Tu cálculo fue sólido."
+
+excellent_prophylaxis:
+  en:
+    low:
+      short: "Smart defensive move. You stopped their threat before it happened. Prevention beats reaction."
+      detail: "Instead of waiting for your opponent's threat to happen, you prevented it. This kind of thinking — asking 'what does my opponent want to do?' — is a major step in chess improvement."
+    mid:
+      short: "Prophylactic thinking. You neutralized {threat_type} before it materialized. Prevention over reaction."
+      detail: "You asked the right question: 'what is my opponent's plan?' and then stopped it. Prophylaxis is one of the most underrated skills at your level. You're developing it."
+    high:
+      short: "Excellent prophylaxis. You denied their plan while maintaining your own. Dual-purpose defense."
+      detail: "The strongest form of prophylaxis serves your plan while hindering theirs. Your move accomplished both — it blocked {threat_type} while improving your position. That's sophisticated play."
+  es:
+    low:
+      short: "Jugada defensiva inteligente. Paraste su amenaza antes de que ocurriera. Prevenir supera a reaccionar."
+      detail: "En lugar de esperar a que la amenaza de tu oponente ocurra, la previniste. Este tipo de pensamiento — preguntar '¿qué quiere hacer mi oponente?' — es un paso importante en la mejora."
+    mid:
+      short: "Pensamiento profiláctico. Neutralizaste {threat_type} antes de que se materializara. Prevención sobre reacción."
+      detail: "Hiciste la pregunta correcta: '¿cuál es el plan de mi oponente?' y luego lo paraste. La profilaxis es una de las habilidades más subestimadas a tu nivel."
+    high:
+      short: "Excelente profilaxis. Negaste su plan mientras mantenías el tuyo. Defensa de doble propósito."
+      detail: "La forma más fuerte de profilaxis sirve a tu plan mientras dificulta el de ellos. Tu jugada cumplió ambos — bloqueó {threat_type} mientras mejoraba tu posición."
+
+excellent_piece_activity:
+  en:
+    low:
+      short: "Great piece placement. Your {piece} now controls key squares. Active pieces win games."
+      detail: "You placed your piece on its best possible square — it's active, well-defended, and controlling important territory. When every piece is on a good square, your position plays itself."
+    mid:
+      short: "Optimal activation. Your {piece} on {square} dominates the position. Activity over material."
+      detail: "That piece is now worth more than its material value because of its activity. It controls key squares, supports your plan, and restricts your opponent's options. This is how strong players think."
+    high:
+      short: "Peak activity for {piece}. It coordinates with your other pieces perfectly. Harmony achieved."
+      detail: "The strongest positions aren't about having more material — they're about having better piece coordination. Your {piece} on {square} works in concert with your other pieces to control the critical squares."
+  es:
+    low:
+      short: "Gran colocación de pieza. Tu {piece} ahora controla casillas clave. Las piezas activas ganan partidas."
+      detail: "Colocaste tu pieza en su mejor casilla posible — está activa, bien defendida, y controlando territorio importante. Cuando cada pieza está en una buena casilla, tu posición se juega sola."
+    mid:
+      short: "Activación óptima. Tu {piece} en {square} domina la posición. Actividad sobre material."
+      detail: "Esa pieza ahora vale más que su valor material por su actividad. Controla casillas clave, apoya tu plan, y restringe las opciones del oponente."
+    high:
+      short: "Actividad máxima para {piece}. Coordina con tus otras piezas perfectamente. Armonía alcanzada."
+      detail: "Las posiciones más fuertes no son sobre tener más material — son sobre tener mejor coordinación. Tu {piece} en {square} trabaja en concierto con tus otras piezas para controlar las casillas críticas."
+
+excellent_pawn_break:
+  en:
+    low:
+      short: "Good pawn push. You opened lines for your pieces. Pawn breaks create opportunities."
+      detail: "That pawn push opened up the position for your pieces. When your pieces are developed and you need action, a pawn break on the correct side is often the key. Well timed."
+    mid:
+      short: "Well-timed pawn break. Lines opened for your pieces while opponent's structure weakened."
+      detail: "The pawn break achieved two things: it opened lines for your rooks and bishops, and it created weaknesses in your opponent's pawn structure. That's the dual purpose you want from pawn breaks."
+    high:
+      short: "Structural transformation at the right moment. The break changed the position in your favor. Calculated."
+      detail: "You chose the precise moment for the pawn break — when your pieces were positioned to exploit the opened lines and your opponent's pieces couldn't adapt fast enough. Timing is everything."
+  es:
+    low:
+      short: "Buen avance de peón. Abriste líneas para tus piezas. Las rupturas crean oportunidades."
+      detail: "Ese avance de peón abrió la posición para tus piezas. Cuando tus piezas están desarrolladas y necesitas acción, una ruptura de peón en el lado correcto suele ser la clave."
+    mid:
+      short: "Ruptura de peón bien temporizada. Líneas abiertas para tus piezas y la estructura rival debilitada."
+      detail: "La ruptura logró dos cosas: abrió líneas para tus torres y alfiles, y creó debilidades en la estructura de peones del oponente. Ese doble propósito es lo que buscas."
+    high:
+      short: "Transformación estructural en el momento justo. La ruptura cambió la posición a tu favor. Calculado."
+      detail: "Elegiste el momento preciso para la ruptura — cuando tus piezas estaban posicionadas para explotar las líneas abiertas y las piezas rivales no podían adaptarse a tiempo."
+
+excellent_centralization:
+  en:
+    low:
+      short: "Your {piece} in the center controls the whole board. Central pieces are powerful pieces."
+      detail: "A piece in the center can reach more squares than one on the edge. Your {piece} is now influencing both sides of the board. Keep controlling the center — it's the foundation of good chess."
+    mid:
+      short: "Centralized {piece} on {square}. Maximum influence. Central control leads to attacking chances."
+      detail: "That central square gives your {piece} reach across the entire board. Centralized pieces create tactical possibilities on both flanks. This is why controlling the center matters."
+    high:
+      short: "Dominant centralization. That {piece} on {square} restricts opponent's entire position. Strategic anchor."
+      detail: "The {piece} on {square} acts as a permanent strategic anchor — restricting your opponent's pieces while supporting operations on either side. This kind of dominant centralization is worth more than a pawn."
+  es:
+    low:
+      short: "Tu {piece} en el centro controla todo el tablero. Piezas centrales son piezas poderosas."
+      detail: "Una pieza en el centro puede alcanzar más casillas que una en el borde. Tu {piece} ahora influye en ambos lados del tablero. Sigue controlando el centro."
+    mid:
+      short: "Tu {piece} centralizada en {square}. Influencia máxima. El control central lleva a chances de ataque."
+      detail: "Esa casilla central le da a tu {piece} alcance a todo el tablero. Las piezas centralizadas crean posibilidades tácticas en ambos flancos."
+    high:
+      short: "Centralización dominante. Esa {piece} en {square} restringe toda la posición rival. Ancla estratégica."
+      detail: "La {piece} en {square} actúa como un ancla estratégica permanente — restringiendo las piezas rivales mientras apoya operaciones en ambos lados."
+
+
+# ============================================================================
+# THEORY / SURVIVAL / TILT — context-specific messages
+# ============================================================================
+
+theory_exit:
+  en:
+    all:
+      short: "Off-book at move {move}. This is your critical zone. What's the plan?"
+      detail: "You've left the opening theory you prepared. This is where your Glitch Report says you usually struggle. Slow down, assess the position, and find a plan before making your next move."
+  es:
+    all:
+      short: "Fuera de libro en jugada {move}. Esta es tu zona crítica. ¿Cuál es el plan?"
+      detail: "Dejaste la teoría de apertura que preparaste. Aquí es donde tu Glitch Report dice que usualmente luchas. Baja el ritmo, evalúa la posición, y encuentra un plan antes de tu próxima jugada."
+
+theory_exit_early:
+  en:
+    all:
+      short: "Off-book very early — move {move}. This opening might need more drill time."
+      detail: "You deviated from theory before move 8. This suggests the opening line isn't memorized deeply enough yet. Add it to your drill queue and practice the first 10 moves until they're automatic."
+  es:
+    all:
+      short: "Fuera de libro muy temprano — jugada {move}. Esta apertura necesita más tiempo de práctica."
+      detail: "Te desviaste de la teoría antes de la jugada 8. Esto sugiere que la línea no está memorizada lo suficiente. Agrégala a tu cola de práctica y repasa las primeras 10 jugadas."
+
+survival_mode:
+  en:
+    all:
+      short: "Non-standard move. Don't panic. What's the threat?"
+      detail: "Your opponent played something unexpected. This doesn't mean you're losing — it means they went off-book too. Take a breath, identify their threat, and respond to it. Logic over memory from here."
+  es:
+    all:
+      short: "Jugada no estándar. No entres en pánico. ¿Cuál es la amenaza?"
+      detail: "Tu oponente jugó algo inesperado. Esto no significa que estés perdiendo — significa que también salieron de libro. Respira, identifica su amenaza, y responde. Lógica sobre memoria desde aquí."
+
+survival_opponent_blunder:
+  en:
+    all:
+      short: "Opponent weakened their position. Do you see the opportunity? Take your time."
+      detail: "Your opponent just made an inaccuracy. The position shifted in your favor. Don't rush — look for the best way to exploit it. Sometimes the best punishment is simply improving your own position."
+  es:
+    all:
+      short: "El oponente debilitó su posición. ¿Ves la oportunidad? Tómate tu tiempo."
+      detail: "Tu oponente acaba de cometer una imprecisión. La posición se inclinó a tu favor. No apures — busca la mejor forma de explotarlo. A veces el mejor castigo es simplemente mejorar tu propia posición."
+
+tilt_intervention:
+  en:
+    all:
+      short: "Three losses in {minutes} minutes. Pattern issue, not knowledge. Switch to Drill — let it reset."
+      detail: "The position data looks fine. This is a pattern issue, not a knowledge issue. When you play frustrated, you miss things you normally see. Switch to Drill mode — let the reset happen naturally."
+  es:
+    all:
+      short: "Tres derrotas en {minutes} minutos. Problema de patrón, no de conocimiento. Cambia a Drill — resetea."
+      detail: "Los datos de posición se ven bien. Esto es un problema de patrón, no de conocimiento. Cuando juegas frustrado, no ves cosas que normalmente ves. Cambia al modo Drill — deja que el reseteo ocurra."
+
+tilt_soft_warning:
+  en:
+    all:
+      short: "Two losses in a row. The grid detects tension. Consider a drill session to recalibrate."
+      detail: "Not a full tilt warning, but the pattern is forming. Two consecutive losses can spiral. A 5-minute drill session breaks the emotional loop and resets your focus. Your call."
+  es:
+    all:
+      short: "Dos derrotas seguidas. La red detecta tensión. Considera una sesión de drill para recalibrar."
+      detail: "No es una alerta de tilt completa, pero el patrón se está formando. Dos derrotas consecutivas pueden escalar. Una sesión de drill de 5 minutos rompe el ciclo emocional."
+
+
+# ============================================================================
+# SESSION EVENTS — intros, outros, milestones
+# ============================================================================
+
+session_game_over_win:
+  en:
+    all:
+      short: "System victory. The pattern held. Review what worked — then push harder next session."
+      detail: "You won because your preparation worked. Note what went right: the opening, the transition, the execution. Now repeat it — consistency is what builds rating."
+  es:
+    all:
+      short: "Victoria del sistema. El patrón se sostuvo. Revisa qué funcionó — luego presiona más la próxima sesión."
+      detail: "Ganaste porque tu preparación funcionó. Nota qué salió bien: la apertura, la transición, la ejecución. Ahora repítelo — la consistencia es lo que construye rating."
+
+session_game_over_loss:
+  en:
+    all:
+      short: "System error logged. The data is captured. Review the collapse point and drill it."
+      detail: "Every loss is intelligence. The system captured where the position broke down. Review the collapse point, identify the pattern, and add it to your drill queue. This is how you improve."
+  es:
+    all:
+      short: "Error del sistema registrado. Los datos fueron capturados. Revisa el punto de colapso y practícalo."
+      detail: "Cada derrota es inteligencia. El sistema capturó dónde se rompió la posición. Revisa el punto de colapso, identifica el patrón, y agrégalo a tu cola de práctica."
+
+session_game_over_draw:
+  en:
+    all:
+      short: "Stalemate of forces. Evaluate: was the draw a fair result, or did you miss a win?"
+      detail: "Draws can be good or bad depending on the position. If you were winning and drew, check where the conversion failed. If it was equal throughout, the draw was correct."
+  es:
+    all:
+      short: "Equilibrio de fuerzas. Evalúa: ¿el empate fue justo, o perdiste una ganancia?"
+      detail: "Los empates pueden ser buenos o malos dependiendo de la posición. Si ibas ganando y empataste, revisa dónde falló la conversión. Si fue igual todo el rato, el empate fue correcto."
+
+streak_milestone_3:
+  en:
+    all:
+      short: "Three-day streak. Pattern forming. The grid recognizes consistency."
+      detail: "Three consecutive days of training. You're building the habit that separates improving players from stuck ones. Keep the rhythm — the results will follow."
+  es:
+    all:
+      short: "Racha de tres días. Patrón formándose. La red reconoce la consistencia."
+      detail: "Tres días consecutivos de entrenamiento. Estás construyendo el hábito que separa a los que mejoran de los que se estancan."
+
+streak_milestone_7:
+  en:
+    all:
+      short: "Seven days. The Operator protocol is active. Your neural pathways are adapting."
+      detail: "A full week of daily training. At this point, the spaced repetition is working — the moves you drilled on day 1 are now approaching their second review. The system is building your chess memory."
+  es:
+    all:
+      short: "Siete días. El protocolo Operador está activo. Tus rutas neuronales se están adaptando."
+      detail: "Una semana completa de entrenamiento diario. A este punto, la repetición espaciada está funcionando — las jugadas que practicaste el día 1 se acercan a su segunda revisión."
+
+drill_queue_empty:
+  en:
+    all:
+      short: "Neural sync complete. All moves reviewed. The grid is clear until tomorrow."
+      detail: "You've reviewed every due card. Your opening knowledge is current. Come back tomorrow — the spaced repetition system will have new cards ready at the optimal review interval."
+  es:
+    all:
+      short: "Sincronización neural completa. Todas las jugadas revisadas. La red está limpia hasta mañana."
+      detail: "Revisaste cada carta pendiente. Tu conocimiento de aperturas está al día. Vuelve mañana — el sistema de repetición espaciada tendrá nuevas cartas listas en el intervalo óptimo."
+
+drill_correct:
+  en:
+    all:
+      short: "Calculated. Move logged. Interval extended."
+      detail: "Correct. The system logged this as a successful recall. Your review interval for this position will increase — meaning you're memorizing it deeper each time."
+  es:
+    all:
+      short: "Calculado. Jugada registrada. Intervalo extendido."
+      detail: "Correcto. El sistema registró esto como un recuerdo exitoso. Tu intervalo de revisión para esta posición aumentará — significando que la memorizas más profundamente cada vez."
+
+drill_incorrect:
+  en:
+    all:
+      short: "System error. Correct move was {best_move}. Interval reset. You'll see this again tomorrow."
+      detail: "The correct move was {best_move}. Your review interval resets to 1 day — you'll practice this position again tomorrow. Repetition is how this becomes automatic."
+  es:
+    all:
+      short: "Error del sistema. La jugada correcta era {best_move}. Intervalo reseteado. Verás esto mañana."
+      detail: "La jugada correcta era {best_move}. Tu intervalo de revisión se resetea a 1 día — practicarás esta posición de nuevo mañana. La repetición es lo que la hace automática."
+
+
+# ============================================================================
+# FALLBACK — used when no specific pattern is matched
+# ============================================================================
+
+fallback_blunder:
+  en:
+    all:
+      short: "Critical error. Opponent gains decisive advantage. Review this position after the game."
+      detail: "A significant mistake occurred. The position has shifted strongly in your opponent's favor. After the game, review this exact position to understand what went wrong."
+  es:
+    all:
+      short: "Error crítico. El oponente gana ventaja decisiva. Revisa esta posición después de la partida."
+      detail: "Ocurrió un error significativo. La posición cambió fuertemente a favor de tu oponente. Después de la partida, revisa esta posición exacta."
+
+fallback_mistake:
+  en:
+    all:
+      short: "Suboptimal. A stronger continuation existed. Slight edge surrendered."
+      detail: "Not the best move in this position. The edge has shifted slightly. Check the suggested move after the game to understand the improvement."
+  es:
+    all:
+      short: "Subóptima. Existía una continuación más fuerte. Leve ventaja cedida."
+      detail: "No fue la mejor jugada en esta posición. La ventaja cambió levemente. Revisa la jugada sugerida después de la partida."
+
+fallback_inaccuracy:
+  en:
+    all:
+      short: "Minor imprecision. The engine sees a slightly better path. Not critical."
+      detail: "A small imprecision — the kind that doesn't lose the game but adds up over time. The engine found a slightly more accurate continuation."
+  es:
+    all:
+      short: "Imprecisión menor. El motor ve un camino ligeramente mejor. No es crítico."
+      detail: "Una pequeña imprecisión — del tipo que no pierde la partida pero se acumula con el tiempo. El motor encontró una continuación ligeramente más precisa."
+
+fallback_excellent:
+  en:
+    all:
+      short: "Optimal continuation executed. Clean."
+      detail: "The engine agrees — that was the best move in the position. You found it. Keep playing at this level."
+  es:
+    all:
+      short: "Continuación óptima ejecutada. Limpio."
+      detail: "El motor está de acuerdo — esa era la mejor jugada en la posición. La encontraste. Sigue jugando a este nivel."

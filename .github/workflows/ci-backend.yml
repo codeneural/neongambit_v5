@@ -1,0 +1,64 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [develop, main]
+    paths: ['backend/**']
+  pull_request:
+    branches: [develop, main]
+    paths: ['backend/**']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: neongambit_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Stockfish
+        run: sudo apt-get install -y stockfish
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Run type check
+        run: cd backend && mypy app/
+
+      - name: Run lint
+        run: cd backend && ruff check app/
+
+      - name: Run tests with coverage
+        env:
+          DATABASE_URL: postgresql+asyncpg://postgres:test@localhost/neongambit_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET_KEY: test-secret-key-not-for-production
+          ENVIRONMENT: test
+        run: |
+          cd backend
+          pytest --cov=app --cov-report=xml --cov-fail-under=80 -v
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: backend/coverage.xml
+          flags: backend
