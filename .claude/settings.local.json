@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /c/Users/minis/DevWorks status)",
+      "Bash(git:*)",
+      "Bash(mkdir -p backend/app/core backend/app/db/models backend/app/schemas backend/app/api/v1 backend/app/services backend/app/workers backend/app/utils)",
+      "Bash(mkdir -p backend/alembic backend/tests backend/scripts)",
+      "Bash(mkdir -p frontend)",
+      "Bash(mkdir -p data)",
+      "Bash(mkdir -p .agents/rules .agents/skills .agents/workflows)",
+      "Bash(find . -not -path './.git/*' -not -path './.claude/*' -type d -empty -exec touch {}/.gitkeep \\\\;)"
+    ]
+  }
+}
