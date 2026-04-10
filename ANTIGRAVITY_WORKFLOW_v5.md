@@ -177,61 +177,235 @@ Ya tenemos un Design System completo en `FRONTEND_IMPLEMENTATION_GUIDE_v5.md` (s
 
 **Paso 2 — Prompts para generar las pantallas clave**
 
-Generar estas pantallas en Stitch en este orden (de más a menos críticas):
+Generate these screens in Stitch in this order (most to least critical):
+
+---
+
+### PROMPT 1 — Mission Control (Home Dashboard)
+
+> **Status: APPROVED** — output matches spec. Use as-is.
 
 ```
-PROMPT 1 — Mission Control (Home):
-"Cyberpunk chess training app dashboard called NeonGambit.
-Dark theme: background #080810, primary accent #00E5FF (cyan neon),
-secondary #E0008C (magenta), font Orbitron for headers.
-Mobile-first portrait layout (375px width).
-Show: user Lichess rating with +47 month delta in a glowing cyan card,
-two opening progress bars (Sicilian 41%, Ruy Lopez 31%), 
-a 'TODAY'S DRILL' section showing '7 moves due · Est. 6 min' with cyan start button,
-a 'RECOMMENDED SESSION' section showing opening name and reason,
-3-tab bottom navigation (Arena, Drill, Profile).
-Glassmorphism cards with subtle borders. Streak flame badge in top-right."
+Cyberpunk chess training app dashboard. App name: NeonGambit.
+Mobile portrait layout, 375px wide, full height.
+Page background: #080810 (near-black with a very subtle blue tint).
+All header text: Orbitron font, uppercase, letter-spacing 0.12em.
+Body text: Inter. Terminal/data text: JetBrains Mono.
 
-PROMPT 2 — The Arena (Sparring Session):
-"Cyberpunk chess game screen. Background #080810.
-Top: horizontal theory integrity progress bar (73%, cyan to magenta gradient).
-Center: chess board with dark squares #161625, light squares #0F0F1A,
-cyan glow shadow around the board. Left side: vertical eval gauge (VU meter style).
-Bottom: terminal-style coach feedback box with scanlines, green cursor,
-JetBrains Mono font, text '> NEON: You are off-book at move 9. Focus.'
-Very bottom: [Resign] button in glassmorphism style.
-Portrait mobile layout."
+LAYOUT — top to bottom:
 
-PROMPT 3 — Glitch Report Reveal:
-"Full screen dark cyberpunk diagnostic report.
-Header: '⚡ GLITCH REPORT' in Orbitron font with cyan glow, '@username' subtitle.
-Three 'CRITICAL VULNERABILITY' cards (all visible, not blurred) with 3px magenta left border,
-red warning icon, opening name in white Orbitron, 
-small collapse type badge below win rate (e.g. 'TACTICAL BLUNDER' in red, 'POSITIONAL DRIFT' in amber),
-horizontal win rate bar (22% fill, magenta), 
-italic diagnosis text in smaller font.
-First two cards: cyan 'DRILL THIS OPENING' button.
-Third card: locked button with padlock icon '🔒 DRILL THIS — Pro'.
-Below: 'STRENGTHS' section in emerald green, two rows with checkmarks.
-Bottom: large gray text box showing overall pattern analysis.
-Very dramatic, data-breach aesthetic."
+[HEADER BAR]
+Left: 4x4 grid icon + "NEON_GAMBIT" in Orbitron bold, #00E5FF, font-size 16px.
+Right: flame emoji + streak number "7" in amber #F59E0B, inside a small pill badge.
 
-PROMPT 4 — Neural Drill:
-"Cyberpunk chess memory drill screen.
-Top: 'NEURAL DRILL' header, 'Move 3/7' counter, cyan progress bar.
-Center: chess board at a specific position.
-Below board: large glassmorphism card showing opening name and 
-question '> NEON: What is Black\'s best move here?'
-Bottom: two buttons — [SHADOW HINT] with amber/warning color, [SKIP] in gray.
-Minimal, focused, no distractions."
+[RATING CARD] — glassmorphism card, background rgba(15,15,26,0.85), border 1px solid #1E1E35, border-radius 12px, padding 16px.
+Label "CURRENT STANDING" in Orbitron 10px #8B8BA0 uppercase.
+Large number "2142" in Orbitron 36px bold #F0F0F5 with subtle cyan text-shadow.
+Label "Lichess Rating" in Inter 13px #8B8BA0.
+Right side: pill badge "+47 MONTH DELTA" — background #00E5FF at 15% opacity, border 1px solid #00E5FF, text #00E5FF, Orbitron 10px.
+Thin cyan (#00E5FF) glowing progress bar below the number, full width, height 2px.
 
-PROMPT 5 — Profile/Settings:
-"Cyberpunk chess player profile and settings screen.
-Top: player username, Lichess rating 1387 with flame streak icon.
-Lichess rating chart (line chart, cyan line, dark background, 8 weeks data).
-Stats grid: wins, accuracy, sessions, drill cards.
-Settings section: ELO target slider, language selector (EN/ES toggle),
-Lichess username with re-sync button, upgrade CTA for free users."
+[TODAY'S DRILL CARD] — same glassmorphism style.
+Label "ACTIVE OBJECTIVE" in Orbitron 10px #8B8BA0.
+Row: left side "TODAY'S DRILL" bold Orbitron 15px #F0F0F5 + "7 moves due · Est. 6 min" in JetBrains Mono 12px #8B8BA0 below. Right side: solid cyan button "START" — background #00E5FF, text #080810 (dark), font Orbitron bold, border-radius 8px, box-shadow 0 0 16px rgba(0,229,255,0.4).
+
+[NEURAL MAPPING SECTION]
+Label "NEURAL MAPPING" in Orbitron 11px #8B8BA0, margin-top 20px.
+Two progress rows:
+  Row 1: "Sicilian" left (Inter 14px #F0F0F5), "41%" right (Inter 14px #00E5FF). Below: full-width track #1E1E35, fill bar #00E5FF at 41%, height 4px, border-radius 2px.
+  Row 2: "Ruy Lopez" left, "31%" right (magenta #E0008C). Fill bar #E0008C at 31%.
+4px vertical spacing between rows.
+
+[TACTICAL RECOMMENDATION CARD] — glassmorphism card with 3px left border solid #E0008C.
+Label "TACTICAL RECOMMENDATION" in Orbitron 10px #8B8BA0.
+Inner content row: small magenta circle icon left, then "RECOMMENDED SESSION" in Orbitron 11px #8B8BA0 above, "Caro-Kann Defense" in Orbitron 15px bold #F0F0F5.
+Below: "Reason:" italic Inter 13px #8B8BA0 + "High loss rate in your recent games against 1.e4. Focus on the Advance Variation structures." regular Inter 13px #8B8BA0. Wrap to 3 lines max.
+
+[BOTTOM NAVIGATION] — fixed bottom, background #0F0F1A, border-top 1px solid #1E1E35.
+3 tabs equally spaced: "ARENA" (gamepad icon), "DRILL" (active, cyan #00E5FF, dot indicator below icon), "PROFILE" (person icon).
+Inactive tab icons: #4B4B65. Active tab label: Orbitron 9px #00E5FF.
+```
+
+---
+
+### PROMPT 2 — The Arena (Sparring Session) — REVISED
+
+> **Previous result was rejected.** Board was nearly invisible, eval gauge absent, layout felt empty. Apply these explicit fixes.
+
+```
+Cyberpunk chess sparring screen for mobile. 375px wide portrait layout.
+Page background: #080810. All text uses Orbitron (headers/labels) or JetBrains Mono (terminal).
+No white backgrounds anywhere. No light themes.
+
+LAYOUT — top to bottom, no gaps, full bleed:
+
+[THEORY INTEGRITY BAR] — full width, height 36px, background #0F0F1A.
+Left label: "THEORY INTEGRITY" in Orbitron 9px #8B8BA0 uppercase.
+Right label: "73%" in Orbitron 11px bold #00E5FF.
+Below label row: full-width progress track, height 6px, background #1E1E35, border-radius 3px.
+Fill: 73% width, gradient left-to-right from #00E5FF (cyan) to #E0008C (magenta). Glow: box-shadow 0 0 10px rgba(0,229,255,0.5).
+
+[BOARD + EVAL GAUGE ROW] — horizontal flex row filling the center section (~300px tall).
+
+  [LEFT: EVAL GAUGE] — width 20px, full board height.
+  Vertical bar, background #0F0F1A, border-right 1px solid #1E1E35.
+  Center horizontal tick mark: thin line #4B4B65 at 50% height, label "+0.0" in JetBrains Mono 8px #4B4B65 rotated 90deg.
+  Top label: "+1.9" in JetBrains Mono 8px #10B981 (emerald).
+  Fill from center upward: #10B981 (emerald green) solid bar, 60% of top half filled. Simulating White is slightly ahead.
+  Faint flickering effect: add 3–4 tiny horizontal tick marks at irregular heights on the green fill, like a VU meter.
+
+  [CENTER: CHESS BOARD] — square, fills remaining width (~335px × 335px).
+  The board is an 8×8 grid. Coordinate labels outside board: letters a–h below, numbers 1–8 on right, in JetBrains Mono 9px #4B4B65.
+  Dark squares: #161625. Light squares: #1A2035 (slightly blue-tinted, clearly distinguishable from dark squares — NOT the same color).
+  Board border: 2px solid #1E1E35, box-shadow 0 0 24px rgba(0,229,255,0.25) (cyan glow around entire board).
+  
+  CHESS PIECES — show a realistic Sicilian Najdorf mid-game position, approximately move 12:
+    White pieces (flat icon style, color #00E5FF cyan with glow):
+      Rooks on a1, h1. King on g1. Queen on d1. Bishops on c1, f2. Knights on d5, f3.
+      Pawns on a2, b2, c4, e4, f4, g2, h2.
+    Black pieces (flat icon style, color #E0008C magenta with glow):
+      Rook on a8, f8. King on g8. Queen on d8. Bishop on e7, b7. Knight on d7, f6.
+      Pawns on a7, b5, d6, e5, g7, h7.
+  Piece style: simple flat geometric chess symbols (♙♖♕♔ etc.) — NOT 3D, NOT photorealistic. Each piece has a subtle matching glow shadow (cyan pieces: 0 0 6px rgba(0,229,255,0.6); magenta pieces: 0 0 6px rgba(224,0,140,0.6)).
+  Highlighted square e4: subtle amber (#F59E0B) overlay at 25% opacity (last move indicator).
+
+[COACH TERMINAL] — glassmorphism panel, height ~110px, background rgba(10,15,10,0.9), border 1px solid #1E1E35, border-top 1px solid #00E5FF at 30% opacity.
+Scanlines overlay: repeating horizontal lines every 4px, rgba(0,0,0,0.1), covering full panel.
+Inner padding 12px.
+Top-left small badge: "■ COACH_MODULE_ACTIVE" in JetBrains Mono 9px #10B981.
+Main text line: "> NEON: You are off-book at move 9. Focus on pawn structure." JetBrains Mono 12px #F0F0F5. Text appears mid-type, with a blinking green cursor "|" at the end.
+
+[RESIGN BUTTON ROW] — height 48px, centered.
+Button: glassmorphism style, background rgba(224,0,140,0.08), border 1px solid rgba(224,0,140,0.4), border-radius 8px, width 60%.
+Left icon: small flag icon in #E0008C. Text "RESIGN" in Orbitron bold 13px #E0008C. No fill, subtle magenta glow.
+
+[BOTTOM NAVIGATION] — same as Mission Control. Active tab: THE ARENA (crosshair/sword icon), tab label #00E5FF with dot indicator.
+```
+
+---
+
+### PROMPT 3 — Glitch Report Reveal
+
+> **Previous result: not yet generated.** Apply these specs.
+
+```
+Full-screen mobile cyberpunk diagnostic report. 375px wide portrait.
+Page background: #080810. Header font: Orbitron. Body: Inter. Data/badges: JetBrains Mono.
+
+LAYOUT — scrollable content:
+
+[HEADER]
+Top-left: back arrow icon #8B8BA0.
+Centered: "⚡ GLITCH REPORT" in Orbitron bold 20px #F0F0F5 with cyan text-shadow (0 0 12px rgba(0,229,255,0.8)).
+Below: "@codeneural" in JetBrains Mono 13px #8B8BA0.
+Thin divider line #1E1E35, full width.
+
+[SECTION LABEL] "CRITICAL VULNERABILITIES" in Orbitron 10px #8B8BA0 uppercase, margin-top 16px.
+
+[VULNERABILITY CARD × 3] — each card: background #0F0F1A, border-radius 12px, border 1px solid #1E1E35, LEFT border 3px solid #E0008C (magenta), padding 14px, margin-bottom 12px.
+
+  Card structure (repeat for 3 cards):
+    [ROW 1]: Red warning triangle icon (⚠️ or SVG) left. Right: opening name in Orbitron 14px bold #F0F0F5. Example names: "CARO-KANN ADVANCE", "FRENCH DEFENSE", "QUEEN'S GAMBIT".
+    [ROW 2]: Collapse type badge — pill shape, border 1px solid color, JetBrains Mono 9px uppercase.
+      Card 1: "TACTICAL BLUNDER" — border #EF4444, text #EF4444, background rgba(239,68,68,0.1).
+      Card 2: "POSITIONAL DRIFT" — border #F59E0B, text #F59E0B, background rgba(245,158,11,0.1).
+      Card 3: "TACTICAL BLUNDER" — same as card 1.
+    [ROW 3]: Label "WIN RATE" in Orbitron 9px #8B8BA0. Percentage "22%" right-aligned in Inter 13px #E0008C.
+    [ROW 4]: Progress track full-width, height 5px, background #1E1E35. Fill: 22% magenta #E0008C.
+    [ROW 5]: Italic diagnosis text in Inter 12px #8B8BA0. Example: "Consistent collapse after move 6. Pattern: premature pawn advance exposes king."
+    [ROW 6]:
+      Cards 1 & 2: full-width button "DRILL THIS OPENING" — background #00E5FF, text #080810, Orbitron bold 12px, border-radius 8px, box-shadow 0 0 12px rgba(0,229,255,0.35).
+      Card 3: full-width button "🔒 DRILL THIS — PRO" — background rgba(124,58,237,0.15), border 1px solid #7C3AED, text #7C3AED, Orbitron bold 12px. Lock icon left.
+
+[STRENGTHS SECTION]
+Label "STRENGTHS" in Orbitron 10px #10B981 uppercase.
+Two rows, each: green checkmark "✓" + opening name Inter 14px #F0F0F5 + win rate "67%" Inter 14px #10B981 right-aligned.
+Thin #10B981 at 20% opacity progress fill below each (67% and 58% wide).
+
+[PATTERN ANALYSIS BOX]
+Background #0F0F1A, border 1px solid #1E1E35, border-radius 8px, padding 14px.
+Label "PATTERN ANALYSIS" Orbitron 10px #8B8BA0.
+Body text Inter 13px #8B8BA0, 4 lines: "Your primary vulnerability is early middle-game pawn structure collapse. Opponent consistently exploits your d5 push timing. Recommend 3 focused drill sessions on Caro-Kann Advance before your next rated game."
+```
+
+---
+
+### PROMPT 4 — Neural Drill
+
+```
+Minimalist cyberpunk chess memory drill. 375px portrait mobile.
+Background: #080810. Primary accent: #00E5FF. No clutter, maximum focus.
+
+LAYOUT — top to bottom:
+
+[HEADER ROW]
+Left: X close icon #4B4B65.
+Center: "NEURAL DRILL" Orbitron bold 16px #F0F0F5.
+Right: "3 / 7" JetBrains Mono 13px #8B8BA0.
+
+[PROGRESS BAR] Full-width, height 4px. Track: #1E1E35. Fill: 43% (3/7) in #00E5FF. Glow: box-shadow 0 0 8px rgba(0,229,255,0.4).
+
+[OPENING LABEL] Centered text "Sicilian Najdorf — Move 9" in JetBrains Mono 12px #8B8BA0. margin: 12px 0.
+
+[CHESS BOARD] Same board styling as Arena prompt (dark squares #161625, light squares #1A2035, coordinate labels, cyan glow border). Size: ~335px square.
+Show a specific Sicilian position, around move 9. Black king castled kingside. White pieces active center.
+One square highlighted in amber (#F59E0B at 30% opacity): the key square the user must identify.
+White pieces: #00E5FF flat icons. Black pieces: #E0008C flat icons.
+
+[QUESTION CARD] — glassmorphism, background rgba(15,15,26,0.9), border 1px solid #1E1E35, border-top 1px solid #00E5FF at 30% opacity, padding 16px.
+Opening name small label: "Sicilian Najdorf, English Attack" Orbitron 10px #8B8BA0 uppercase.
+Question line: "> NEON: What is Black's best move here?" JetBrains Mono 13px #F0F0F5 with blinking cursor.
+
+[BUTTON ROW] — two buttons side by side, margin 16px.
+Left: "SHADOW HINT" — background rgba(245,158,11,0.12), border 1px solid #F59E0B, text #F59E0B Orbitron bold 12px, border-radius 8px, lightbulb icon left.
+Right: "SKIP" — background transparent, border 1px solid #4B4B65, text #4B4B65 Orbitron 12px, border-radius 8px.
+```
+
+---
+
+### PROMPT 5 — Profile / Settings
+
+```
+Cyberpunk chess player profile and settings screen. 375px portrait mobile.
+Background: #080810. Orbitron headers. Inter body. JetBrains Mono for data.
+
+LAYOUT — scrollable:
+
+[HEADER] "PROFILE" in Orbitron bold 16px #F0F0F5, centered. Settings gear icon top-right #8B8BA0.
+
+[PLAYER CARD] — glassmorphism card, padding 16px.
+Avatar: circular 52px, background #161625, border 2px solid #00E5FF, glow 0 0 12px rgba(0,229,255,0.3). Initials "CG" in Orbitron bold #00E5FF inside.
+Right of avatar: Username "codeneural" Orbitron bold 15px #F0F0F5. Below: "🔥 12 day streak" Inter 13px #F59E0B.
+Right-aligned: "1387 ELO" Orbitron 18px bold #F0F0F5.
+
+[RATING CHART] — glassmorphism panel, height 120px, padding 12px.
+Label "RATING HISTORY — 8 WEEKS" Orbitron 10px #8B8BA0.
+Line chart: background transparent. X-axis: 8 data points. Line color: #00E5FF, strokeWidth 2px. Area fill below line: gradient #00E5FF at 20% opacity to transparent.
+Dots at each data point: 4px circle #00E5FF. Grid lines: #1E1E35 horizontal, subtle. Range 1280–1420, trending upward with one dip week 5.
+No heavy chart chrome, minimal axes.
+
+[STATS GRID] — 2×2 grid of small glassmorphism cards.
+Card 1: "WINS" label Orbitron 9px #8B8BA0. Value "34" Orbitron 22px bold #10B981.
+Card 2: "ACCURACY" label. Value "71%" Orbitron 22px bold #00E5FF.
+Card 3: "SESSIONS" label. Value "18" Orbitron 22px bold #F0F0F5.
+Card 4: "DRILLS DONE" label. Value "127" Orbitron 22px bold #F0F0F5.
+
+[SETTINGS SECTION]
+Section label "SETTINGS" Orbitron 10px #8B8BA0 uppercase, margin-top 20px.
+
+Row 1 — ELO Target: Label "TARGET ELO" Inter 14px #F0F0F5 left. Value "1500" Orbitron 14px #00E5FF right.
+Slider below: track #1E1E35, thumb circle #00E5FF with glow, fill left of thumb #00E5FF. Range labeled "800" — "2400" in JetBrains Mono 9px #4B4B65.
+
+Row 2 — Language: Label "LANGUAGE" Inter 14px #F0F0F5 left. Toggle pill right: two segments "EN" | "ES", active "EN" background #00E5FF text #080810, inactive "ES" background #1E1E35 text #8B8BA0. Border-radius full.
+
+Row 3 — Lichess: Label "LICHESS USERNAME" Orbitron 10px #8B8BA0 above. Row: "@codeneural" JetBrains Mono 13px #F0F0F5 left, "RE-SYNC" button right — border 1px solid #00E5FF, text #00E5FF Orbitron 10px, small icon.
+
+[UPGRADE CTA] — full-width card, background linear-gradient(135deg, rgba(124,58,237,0.2), rgba(0,229,255,0.08)), border 1px solid #7C3AED, border-radius 12px, padding 16px.
+"⚡ UNLOCK GRANDMASTER TIER" Orbitron bold 14px #F0F0F5.
+"Voice coaching · Unlimited drills · Deep theory" Inter 12px #8B8BA0.
+Button "UPGRADE — $7.99/mo" full width, background #7C3AED, text #F0F0F5 Orbitron bold 13px, border-radius 8px, box-shadow 0 0 16px rgba(124,58,237,0.4).
+
+[BOTTOM NAVIGATION] Same as other screens. Active tab: PROFILE.
 ```
 
 **Paso 3 — Exportar DESIGN.md via Stitch MCP**

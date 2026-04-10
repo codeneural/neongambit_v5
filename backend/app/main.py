@@ -1,0 +1,42 @@
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.api.v1.router import v1_router
+from app.config import get_settings
+from app.utils.cache import get_redis
+
+settings = get_settings()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    # Validate Redis connection on startup
+    redis = get_redis()
+    await redis.ping()
+    yield
+    await redis.aclose()
+
+
+app = FastAPI(
+    title="NeonGambit API",
+    version="5.1.0",
+    lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(v1_router, prefix="/v1")
+
+
+@app.get("/health", tags=["system"])
+async def health() -> dict[str, str]:
+    return {"status": "ok", "version": "5.1.0"}
