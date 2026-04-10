@@ -1,13 +1,11 @@
-from typing import AsyncGenerator
-
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import UnauthorizedError
 from app.core.security import decode_jwt
-from app.db.session import get_db
 from app.db.models.user import User
+from app.db.session import get_db
 
 bearer = HTTPBearer(auto_error=False)
 
@@ -34,5 +32,6 @@ async def require_pro(user: User = Depends(get_current_user)) -> User:
     """Dependency for Pro-gated endpoints."""
     if not user.is_pro:
         from app.core.exceptions import ForbiddenError
+
         raise ForbiddenError()
     return user

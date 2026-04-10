@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, Integer, JSON, String
+from sqlalchemy import JSON, DateTime, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
@@ -18,7 +18,7 @@ class OpeningCache(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     fen_hash: Mapped[str] = mapped_column(String, index=True)
-    elo_bucket: Mapped[int] = mapped_column(Integer)        # e.g. 1200
+    elo_bucket: Mapped[int] = mapped_column(Integer)  # e.g. 1200
     moves: Mapped[list] = mapped_column(JSON, default=list)
     # Each: {uci, san, frequency, win_rate}
     cached_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

@@ -26,7 +26,7 @@ class SparringSession(Base):
     opening_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("openings.id"), nullable=True
     )
-    player_color: Mapped[str] = mapped_column(String)       # 'white' | 'black'
+    player_color: Mapped[str] = mapped_column(String)  # 'white' | 'black'
     opponent_elo: Mapped[int] = mapped_column(Integer, default=1200)
     current_fen: Mapped[str] = mapped_column(String)
     move_history: Mapped[list] = mapped_column(JSON, default=list)

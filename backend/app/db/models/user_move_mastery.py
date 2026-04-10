@@ -19,7 +19,7 @@ class UserMoveMastery(Base):
         ForeignKey("openings.id", ondelete="CASCADE"), index=True
     )
     move_sequence_hash: Mapped[str] = mapped_column(String, index=True)
-    expected_move: Mapped[str] = mapped_column(String)      # SAN notation
+    expected_move: Mapped[str] = mapped_column(String)  # SAN notation
     fen_before: Mapped[str] = mapped_column(String)
     move_number: Mapped[int] = mapped_column(Integer, default=1)
     easiness_factor: Mapped[float] = mapped_column(Float, default=2.5)
@@ -32,7 +32,5 @@ class UserMoveMastery(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     __table_args__ = (
-        UniqueConstraint(
-            "user_id", "move_sequence_hash", name="uq_user_move_hash"
-        ),
+        UniqueConstraint("user_id", "move_sequence_hash", name="uq_user_move_hash"),
     )

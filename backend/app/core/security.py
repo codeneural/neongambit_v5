@@ -11,7 +11,9 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 30
 
 
-def create_access_token(subject: str, extra_claims: dict[str, Any] | None = None) -> str:
+def create_access_token(
+    subject: str, extra_claims: dict[str, Any] | None = None
+) -> str:
     """Create a signed JWT. subject = user.id (str)."""
     expire = datetime.utcnow() + timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS)
     payload: dict[str, Any] = {"sub": subject, "exp": expire}

@@ -26,9 +26,7 @@ class User(Base):
     preferred_language: Mapped[str] = mapped_column(String, default="en")
     is_pro: Mapped[bool] = mapped_column(Boolean, default=False)
     pro_expires_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime, server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     __table_args__ = (
         CheckConstraint("target_elo BETWEEN 800 AND 3000", name="ck_user_elo_range"),
