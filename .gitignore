@@ -1,0 +1,10 @@
+# Claude Code worktrees
+.claude/worktrees/
+
+# Research binaries
+research/*.zip
+research/*.pdf
+
+# OS
+.DS_Store
+Thumbs.db

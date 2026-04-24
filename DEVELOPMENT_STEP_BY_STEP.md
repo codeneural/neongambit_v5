@@ -1,7 +1,6 @@
 # NeonGambit — Guía de Desarrollo: De Cero a Producción
 
 **Para:** Solo-developer usando AI agents (Antigravity + Claude)
-**Tiempo estimado:** 4-5 semanas
 **Pre-requisitos:** Node.js 20+, Python 3.11+, Git, cuenta GitHub, cuenta Vercel, VPS Hostinger con SSH
 
 ---
